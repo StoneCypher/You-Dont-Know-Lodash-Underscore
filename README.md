@@ -1,4 +1,6 @@
-In response to the response: no
+In response to [the response](https://github.com/stevemao/You-Dont-Know-Lodash-Underscore): no
+
+I respectfully disagree with all of these rebuttals as presented.  Sorry `:(`
 
 ----
 
