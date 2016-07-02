@@ -4,22 +4,6 @@ I respectfully disagree with all of these rebuttals as presented.  Sorry `:(`
 
 ----
 
-## _.each
-
-> Underscore/Lodash may exit iteration early by explicitly returning `false`.
-
-This is a disadvantage.  You can bail on for loops if you want to be able to bail.  Part of the value of map is to assure the programmer that the predicate passed to the iteration cannot do this even in incorrect behavior.
-
-Much of the purpose of the functional calls (`.map`, `.reduce`, `.filter`, and so on) is in distinguishing the behavior of the application of a functor from the quality of the functor.  You should be able to have a function that identifies whether a thing is a duck, and then filter on duck-as-a-quality.
-
-There are important, subtle advantages to this.  For example, `.map` is inherently parallelizable - though underscore's abortable version is not.  In Mozilla Servo, which is written in a lightweight process oriented language, this is a significant performance lose.  Given the nature of parallelism, and that Microsoft Edge is moving in the same direction, and that this is becoming a common language thing (used to be esoteric to languages like erlang and mozart-oz and gambit scheme; now common in things like c# and google go.)
-
-I believe that this will be the norm relatively soon.
-
-Comparison performance as provided is nonsensical, since the two functions being compared aren't doing the same work.  One only applies the functor to the first item; the other to all.
-
-----
-
 ## _.map
 
 > Native doesn't support the `_.property` iteratee shorthand.
@@ -186,6 +170,103 @@ Your code:
   // output: false
   // but browser support maybe the problem
   ```
+
+----
+
+## _.each
+
+So this one's a little complicated.
+
+There are two reasons I can think of to want to exit iteration early: because you're trying to get work done on the front of the container and halt, or because halfway through you realize the work is garbage, and want to bail.
+
+You can do both of those with underscore's `each`, but I would argue that those are both abuses.
+
+The first - applying to the arbitrary front half of an array - would honestly be better represented as a `do while` loop.  The behavior isn't functional: it's not an application of a functor by a traversal to a container.  It's a functor modifying the traversal.  This appears to be what your code is attempting to do.
+
+The easy vanilla notation separates the decision to continue from the mapping behavior.  This, to me, seems strictly superior.  The underscore notation forces the decision to be made together with the application, which reduces composability.
+
+Admittedly, it is annoying to manually bound the traversal.  However, to me this seems less annoying than adding an entire library and learning its idioms.
+
+```javascript
+const droppable_each = (container, action, should_continue = () => true) => {
+    let i = 0, iC = container.length;
+    do (action(container[i++])) while false && (i < iC);
+}
+
+droppable_each([1,2,3], (i) => console.log(i), () => false);
+```
+
+Because your code immediately bails, the decision to continue is just `() => false`.
+
+Your code:
+
+  ```js
+  // Underscore/Lodash
+  _.each([1, 2, 3], function(value, index) {
+    console.log(value);
+    return false;
+  });
+  // output: 1
+
+  // Native
+  [1, 2, 3].forEach(function(value, index) {
+    console.log(value);
+    return false; // does not exit the iteration!
+  });
+  // output: 1 2 3
+  ```
+
+Notably, the underscore version always returns `undefined`.  There's a good argument that that's the right thing to do, since that's what Javascript does.  However, I don't like that Javascript does that; I've always felt that JS should do what most functional languages do, and return a container of the return values from the item invocations.
+
+So I would write it this way:
+
+```javascript
+const retaining_each = (container, action, should_continue = () => true) => {
+    let i = 0, iC = container.length, result = [];
+    do (action(container[i++])) while false && (i < iC);
+    return result;
+}
+```
+
+Now, there's the other possible reason to want bail-early: if you suddenly realize the whole thing is for naught.  That doesn't appear to be what your code is doing, but that's what I usually see people use iteration bail for in other languages.
+
+In JS, that's just `.every/1`.
+
+```javascript
+[1,2,3].every(i => { console.log(i); return false; });
+```
+
+Your code, repeated:
+
+  ```js
+  // Underscore/Lodash
+  _.each([1, 2, 3], function(value, index) {
+    console.log(value);
+    return false;
+  });
+  // output: 1
+
+  // Native
+  [1, 2, 3].forEach(function(value, index) {
+    console.log(value);
+    return false; // does not exit the iteration!
+  });
+  // output: 1 2 3
+  ```
+
+> Underscore/Lodash may exit iteration early by explicitly returning `false`.
+
+This is a disadvantage, for `each`, and this is not a problem for the appropriate approaches, the `do while` loop or `.every/1` respectively.  You can bail on manual loops if you want to be able to bail, and put that behind a function if you need it more than once.  
+
+Part of the value of `.each/1` and `.map/1` and so on is to assure the programmer that the predicate passed to the iteration cannot do this even in incorrect behavior.
+
+Much of the purpose of the functional calls (`.map`, `.reduce`, `.filter`, and so on) is in distinguishing the behavior of the application of a functor from the quality of the functor.  You should be able to have a function that identifies whether a thing is a duck, and then filter on duck-as-a-quality.
+
+There are important, subtle advantages to this.  For example, `.map` is inherently parallelizable - though underscore's abortable version is not.  In Mozilla Servo, which is written in a lightweight process oriented language, this is a significant performance lose.  Given the nature of parallelism, and that Microsoft Edge is moving in the same direction, and that this is becoming a common language thing (used to be esoteric to languages like erlang and mozart-oz and gambit scheme; now common in things like c# and google go.)
+
+I believe that this will be the norm relatively soon.
+
+Comparison performance as provided is nonsensical, since the two functions being compared aren't doing the same work.  One only applies the functor to the first item; the other to all.
 
 # License
 
