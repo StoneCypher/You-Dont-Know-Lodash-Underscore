@@ -30,7 +30,7 @@ It doesn't need to.
 const arr = users.map(u => u.user);
 ```
 
-Shorter, clearer, and faster than the underscore approach, with the bonus of being standards defined and validated by the browser vendors' test sets.
+Clearer and faster than the underscore approach, with no need for library knowledge or weight, and the bonus of being standards defined and validated by the browser vendors' test sets.
 
 Your code:
 
