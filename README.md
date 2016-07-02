@@ -190,7 +190,7 @@ Admittedly, it is annoying to manually bound the traversal.  However, to me this
 ```javascript
 const droppable_each = (container, action, should_continue = () => true) => {
     let i = 0, iC = container.length;
-    do (action(container[i])) while (should_continue[i++]) && (i < iC);
+    do (action(container[i])) while ((should_continue[i++]) && (i < iC));
 }
 
 droppable_each([1,2,3], (i) => console.log(i), () => false);
@@ -223,7 +223,7 @@ So I would write it this way:
 ```javascript
 const retaining_each = (container, action, should_continue = () => true) => {
     let i = 0, iC = container.length, result = [];
-    do (action(container[i])) while (should_continue[i++]) && (i < iC);
+    do (result.push(action(container[i]))) while ((should_continue[i++]) && (i < iC));
     return result;
 }
 ```
