@@ -59,27 +59,11 @@ Your code:
 
 > Native doesn't support the `_.matches` iteratee shorthand.
 
-That's okay.  We have `.filter/1` for when clarity is important, and `.reduce/1,2` for when efficiency is important.
-
-The sensible Vanilla implementation:
+Doesn't need it.
 
 ```javascript
-const result = array.filter(i => i.active === true).map(i =>
+peeps.some(p => p.user === 'barney' && p.active === true);
 ```
-
-The efficient but moderately opaque Vanilla implementation:
-
-```javascript
-peeps.reduce( (p,c) => c.active? p.concat(c) : p, []);
-```
-
-I prefer the sensible implementation for two reasons: one, it's easy as pie to read and understand, and represents the two behaviors distinctly.  Two, it's very easy to modify or extend, and as such seems to me to be more maintainable than the efficient vanilla implementation (though admittedly this second criterion is no advantage over underscore.)
-
-This approach is admittedly less efficient: you have two traversals, one of the full container and one of the filtered container, which is potentially wasteful up to an entire traversal of the original container.  
-
-... to which a great "meh" was heard throughout the force.  Real world JS doesn't work on large datastructures and shouldn't really care about stuff like that.
-
-However, if you do, you can write this efficiently in JS too; indeed significantly more efficiently than in `_`, since it's implemented in-engine native, and is mostly about container allocation and fill, which benefits immensely from native optimizations.
 
 Your code:
 
