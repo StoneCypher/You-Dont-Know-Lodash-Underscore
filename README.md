@@ -154,19 +154,19 @@ Your code:
 
 > Native coerces the argument to a `Number`.
 
-That's because you're using `isNaN/1` instead of [`Number.isNaN/1`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN).  `isNaN/1` is a compatibility fallback for jscript from the 1990s.
+That's because you're using `isNaN/1` instead of [`Number.isNaN/1`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isNaN).
 
-Two of the four references you gave point this out at the very top of the page.  
+Granted, that doesn't exist in IE.  😠
+
+However, it's easier to write this one's self, or to shim it, than to adopt underscore.
+
+```javascript
+if (Number.isNaN === undefined) { Number.isNaN = n => (typeof n === 'number') && isNaN(n) }
+```
 
 It's worth noting that as the language progresses, `Number.isNaN/1` will always have correct behavior for the types available for an individual browser, which is not the case for a library with a local install that may fall out of date.  As JavaScript progresses into having native type support (such as u32/s32 for asm.js,) this seems like an unimportant niche correctness concern.
 
 More importantly, the builtins will be more robust, better tested, and much faster.
-
-```js
-// es3
-console.log(Number.isNaN("blabla"));
-// output: false
-```
 
 Your code:
 
