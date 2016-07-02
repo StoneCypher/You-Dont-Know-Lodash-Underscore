@@ -1,60 +1,24 @@
-## You don't (may not) know Lodash/Underscore 
+In response to the response: no
 
-In response to [You-Dont-Need-Lodash-Underscore](https://github.com/cht8687/You-Dont-Need-Lodash-Underscore) made by [@cht8687](https://github.com/cht8687), yes some of the methods could be replaced by native methods. This is not the case when things get a bit more complex. According to the [Lodash](https://lodash.com/) author, [@jdalton](https://github.com/jdalton):
-
-> If you're only using a handful of methods on arrays and don't care about nullish guards, object iteration, smoothing over enviro/ES5/ES6 issues, FP goodies, iteratee shorthands, lazy evaluation, or other enhancements then built-ins are the way to go. Folks who use lodash know its 270+ modules work great combo'ed with ES6, enabling cleaner code and empowering beyond built-ins.
-
-Here lists the differences. Note: the numbers in performance means Ops/sec.
-
-
-## Quick links
-
-1. [_.each](#_each)
-1. [_.map](#_map)
-1. [_.every](#_every)
-1. [_.some](#_every)
-1. [_.reduce](#_reduce)
-1. [_.reduceRight](#_reduceright)
-1. [_.filter](#_filter)
-1. [_.find](#_find)
-1. [_.findIndex](#_find)
-1. [_.indexOf](#_indexof)
-1. [_.lastIndexOf](#_lastindexof)
-1. [_.isNaN](#_isnan)
-
+----
 
 ## _.each
 
-Underscore/Lodash may exit iteration early by explicitly returning `false`.
+> Underscore/Lodash may exit iteration early by explicitly returning `false`.
 
-  ```js
-  // Underscore/Lodash
-  _.each([1, 2, 3], function(value, index) {
-    console.log(value);
-    return false;
-  });
-  // output: 1
+This is a disadvantage.  You can bail on for loops if you want to be able to bail.  Part of the value of map is to assure the programmer that the predicate passed to the iteration cannot do this even in incorrect behavior.
 
-  // Native
-  [1, 2, 3].forEach(function(value, index) {
-    console.log(value);
-    return false; // does not exit the iteration!
-  });
-  // output: 1 2 3
-  ```
+Comparison performance is nonsensical, since the two functions being compared aren't doing the same work.
 
-### Performance
-
-Lodash|Underscore|Native 
---- | --- | ---
-972,874|101,878|102,864 (**89% slower**)
-
-**[⬆ back to top](#quick-links)**
-
+----
 
 ## _.map
 
-Native doesn't support the `_.property` iteratee shorthand.
+> Native doesn't support the `_.property` iteratee shorthand.
+
+It doesn't need to.  You just wrote a bad vanilla replacement.
+
+Your code:
 
   ```js
   // Underscore/Lodash
@@ -75,31 +39,21 @@ Native doesn't support the `_.property` iteratee shorthand.
   // error!
   ```
 
-### Performance
+The sensible Vanilla approach:
 
-Lodash|Underscore|Native 
---- | --- | ---
-1,214,010|1,171,239|192,404 (**94% slower**)
+```javascript
+const arr = users.map(u => u.user);
+```
 
-**[⬆ back to top](#quick-links)**
+Shorter, clearer, and faster than the underscore approach, with the bonus of being standards defined and validated by the browser vendors' test sets.
 
-
-## _.every
-
-Native doesn't support the `_.property` iteratee shorthand.
-
-### Performance
-
-Lodash|Underscore|Native 
---- | --- | ---
-1,342,410|1,373,736|1,410,766
-
-**[⬆ back to top](#quick-links)**
-
+----
 
 ## _.some
 
-Native doesn't support the `_.matches` iteratee shorthand.
+> Native doesn't support the `_.matches` iteratee shorthand.
+
+That's okay.  We have `.filter/1`, which is shorter, clearer, and faster than the underscore approach.
 
   ```js
   // Underscore/Lodash
@@ -119,6 +73,26 @@ Native doesn't support the `_.matches` iteratee shorthand.
   ];
   var result = array.some({ 'user': 'barney', 'active': false }); // error!
   ```
+
+The sensible Vanilla implementation:
+
+```javascript
+const result = array.filter(i => i.active === true).map(i =>
+```
+
+I prefer the sensible implementation for two reasons: one, it's easy as pie to read and understand, and represents the two behaviors distinctly.  Two, it's very easy to modify or extend, and as such seems to me to be more maintainable than the efficient vanilla implementation (though admittedly this second criterion is no advantage over underscore.)
+
+This approach is admittedly less efficient: you have two traversals, one of the full container and one of the filtered container, which is potentially wasteful up to an entire traversal of the original container.  
+
+... to which a great "meh" was heard throughout the force.  Real world JS doesn't work on large datastructures and shouldn't really care about stuff like that.
+
+However, if you do, you can write this efficiently in JS too; indeed significantly more efficiently than in `_`, since it's implemented in-engine native, and is mostly about container allocation and fill, which benefits immensely from native optimizations.
+
+The smart but moderately opaque Vanilla implementation:
+
+```javascript
+const result = array.reduce( /* COMEBACK */
+```
   
 ### Performance
 
