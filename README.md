@@ -65,6 +65,8 @@ Doesn't need it.
 peeps.some(p => p.user === 'barney' && p.active === true);
 ```
 
+Native, faster, more easily optimized, better defined.
+
 Your code:
 
   ```js
