@@ -1,3 +1,13 @@
+Okay, [the author won't actually budge until I rewrite his benchmarks for him](https://github.com/stevemao/You-Dont-Know-Lodash-Underscore/issues/4#issuecomment-231574602). 
+
+So I had to go install and learn his performance benchmarking tool, and write the benchmarks again from scratch, because he published benchmark results, but not the actual benchmarks, and is waiting on me to fix what he hasn't shared before he'll rethink the advice that he gave.
+
+Guess that's next.
+
+Sadly, jsperf seems to be gone.  So I'll have to commit the benchmark that Steve didn't, too, since he won't brook any dissent without it.
+
+----
+
 In response to [the response](https://github.com/stevemao/You-Dont-Know-Lodash-Underscore): no
 
 I respectfully disagree with all of these rebuttals as presented.  Sorry `:(`
@@ -13,6 +23,14 @@ It doesn't need to.
 ```javascript
 const arr = users.map(u => u.user);
 ```
+
+
+### Performance
+
+Lodash|Underscore|Steve Mao Native|Good native
+--- | --- | --- | ---
+972,874|101,878|102,864 (**89% slower**)|
+
 
 Clearer and faster than the underscore approach, with no need for library knowledge or weight, and the bonus of being standards defined and validated by the browser vendors' test sets.
 
