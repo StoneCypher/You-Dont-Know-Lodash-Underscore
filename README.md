@@ -1,10 +1,4 @@
-Okay, [the author won't actually budge until I rewrite his benchmarks for him](https://github.com/stevemao/You-Dont-Know-Lodash-Underscore/issues/4#issuecomment-231574602). 
-
-So I had to go install and learn his performance benchmarking tool, and write the benchmarks again from scratch, because he published benchmark results, but not the actual benchmarks, and is waiting on me to fix what he hasn't shared before he'll rethink the advice that he gave.
-
-Guess that's next.
-
-Sadly, jsperf seems to be gone.  So I'll have to commit the benchmark that Steve didn't, too, since he won't brook any dissent without it.
+Okay, [the author isn't interested](https://github.com/stevemao/You-Dont-Know-Lodash-Underscore/issues/4#issuecomment-231574602) and the relevant tooling seems to be in flux. 
 
 ----
 
